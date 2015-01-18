@@ -1,6 +1,29 @@
 'use strict';
 
+
+
+var exec = require('child_process').exec;
+var events = require('events').Emitter;
+var bower = require('bower');
 var grunt = require('grunt');
+
+bower.update = function(components) {
+  if (!components) {
+    events.emit('error', 'Error: No components for update');
+  } else if (components.length === 1) {
+    events.emit('end', 'Updated: ' + components[0]);
+  } else {
+    events.emit('end', 'Updated: ' + components.join(', '));
+  }
+};
+
+grunt.log.ok = function(message) {
+  return message;
+};
+
+grunt.log.warn = function(message) {
+  return message;
+};
 
 /*
   ======== A Handy Little Nodeunit Reference ========
@@ -22,27 +45,33 @@ var grunt = require('grunt');
     test.ifError(value)
 */
 
-exports.bower_update_selective = {
-  setUp: function(done) {
-    // setup here if necessary
-    done();
-  },
-  default_options: function(test) {
+exports.tests = {
+  
+  single_component: function(test) {
     test.expect(1);
 
-    var actual = grunt.file.read('tmp/default_options');
-    var expected = grunt.file.read('test/expected/default_options');
-    test.equal(actual, expected, 'should describe what the default behavior is.');
-
-    test.done();
+    exec('grunt bower-update-selective:single_component', function(error, stdout) {
+      console.log(stdout);
+      test.equals(stdout.indexOf('Updated: component1') > 1, true, 'should update one component');
+      test.done();
+    });  
   },
-  custom_options: function(test) {
+  two_components: function(test) {
     test.expect(1);
 
-    var actual = grunt.file.read('tmp/custom_options');
-    var expected = grunt.file.read('test/expected/custom_options');
-    test.equal(actual, expected, 'should describe what the custom option(s) behavior is.');
-
-    test.done();
+    exec('grunt bower-update-selective:two_components', function(error, stdout) {
+      console.log(stdout);
+      test.equals(stdout.indexOf('Updated: component1, component2') > 1, true, 'should update two components');
+      test.done();
+    });  
   },
+  no_components: function(test) {
+    test.expect(1);
+
+    exec('grunt bower-update-selective:no_components', function(error, stdout) {
+      console.log(stdout);
+      test.equals(stdout.indexOf('No components supplied for update.') > 1, true, 'should update no components');
+      test.done();
+    });  
+  }
 };

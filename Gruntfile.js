@@ -29,22 +29,23 @@ module.exports = function(grunt) {
     },
 
     // Configuration to be run (and then tested).
-    bower_update_selective: {
-      default_options: {
+    'bower-update-selective': {
+      options: {
+        update: ['component1']
+      },
+      single_component: {
         options: {
-        },
-        files: {
-          'tmp/default_options': ['test/fixtures/testing', 'test/fixtures/123']
+          update: ['component1']
         }
       },
-      custom_options: {
-        options: {
-          separator: ': ',
-          punctuation: ' !!!'
-        },
-        files: {
-          'tmp/custom_options': ['test/fixtures/testing', 'test/fixtures/123']
-        }
+      two_components: {
+        components: [
+                    'component1',
+                    'component2'
+                  ]
+      },
+      no_components: {
+
       }
     },
 
@@ -65,7 +66,7 @@ module.exports = function(grunt) {
 
   // Whenever the "test" task is run, first clean the "tmp" dir, then run this
   // plugin's task(s), then test the result.
-  grunt.registerTask('test', ['clean', 'bower_update_selective', 'nodeunit']);
+  grunt.registerTask('test', ['nodeunit']);
 
   // By default, lint and run all tests.
   grunt.registerTask('default', ['jshint', 'test']);

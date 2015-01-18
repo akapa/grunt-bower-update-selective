@@ -6,45 +6,29 @@
  * Licensed under the MIT license.
  */
 
+ var bower = require('bower');
+
 'use strict';
 
 module.exports = function(grunt) {
 
-  // Please see the Grunt documentation for more information regarding task
-  // creation: http://gruntjs.com/creating-tasks
+  grunt.registerTask('bower-update-selective', 'Grunt plugin for bower update of select components', function() {
 
-  grunt.registerMultiTask('bower_update_selective', 'Grunt plugin for bower update of select components', function() {
-    // Merge task-specific and/or target-specific options with these defaults.
-    var options = this.options({
-      punctuation: '.',
-      separator: ', '
+    console.log(this.options.update);
+
+    if (!this.components || !this.components.update) {
+      grunt.log.warn('No components supplied for update.');
+      return false;
+    }
+
+    bower.update(this.components.update)
+    .on('end', function(updated) {
+      grunt.log.ok(updated);
+    })
+    .on('error', function(error) {
+      grunt.log.warn(error);
     });
 
-    // Iterate over all specified file groups.
-    this.files.forEach(function(f) {
-      // Concat specified files.
-      var src = f.src.filter(function(filepath) {
-        // Warn on and remove invalid source files (if nonull was set).
-        if (!grunt.file.exists(filepath)) {
-          grunt.log.warn('Source file "' + filepath + '" not found.');
-          return false;
-        } else {
-          return true;
-        }
-      }).map(function(filepath) {
-        // Read file source.
-        return grunt.file.read(filepath);
-      }).join(grunt.util.normalizelf(options.separator));
-
-      // Handle options.
-      src += options.punctuation;
-
-      // Write the destination file.
-      grunt.file.write(f.dest, src);
-
-      // Print a success message.
-      grunt.log.writeln('File "' + f.dest + '" created.');
-    });
   });
 
 };
