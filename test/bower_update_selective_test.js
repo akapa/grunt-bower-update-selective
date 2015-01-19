@@ -1,77 +1,79 @@
 'use strict';
 
-
-
-var exec = require('child_process').exec;
-var events = require('events').Emitter;
-var bower = require('bower');
+var chai = require('chai');
+var sinon = require('sinon');
+var sinonChai = require('sinon-chai');
+var rewire = require('rewire');
 var grunt = require('grunt');
+var bower = require('bower');
 
-bower.update = function(components) {
-  if (!components) {
-    events.emit('error', 'Error: No components for update');
-  } else if (components.length === 1) {
-    events.emit('end', 'Updated: ' + components[0]);
-  } else {
-    events.emit('end', 'Updated: ' + components.join(', '));
-  }
-};
+var UpdateTask = rewire('../tasks/lib/UpdateTask.js');
 
-grunt.log.ok = function(message) {
-  return message;
-};
+chai.should();
+chai.use(sinonChai);
 
-grunt.log.warn = function(message) {
-  return message;
-};
+describe('UpdateTask', function() {
+  var mockBower;
+  var createMockTask;
+  var mockTask;
+  var task;
 
-/*
-  ======== A Handy Little Nodeunit Reference ========
-  https://github.com/caolan/nodeunit
+  createMockTask = function(components, done) {
+    return {
+      _taskOptions: {
+        update: components
+      },
+      options: function() {
+        return this._taskOptions;
+      },
+      async: function() {
+        return done;
+      }
+    };
+  };
 
-  Test methods:
-    test.expect(numAssertions)
-    test.done()
-  Test assertions:
-    test.ok(value, [message])
-    test.equal(actual, expected, [message])
-    test.notEqual(actual, expected, [message])
-    test.deepEqual(actual, expected, [message])
-    test.notDeepEqual(actual, expected, [message])
-    test.strictEqual(actual, expected, [message])
-    test.notStrictEqual(actual, expected, [message])
-    test.throws(block, [error], [message])
-    test.doesNotThrow(block, [error], [message])
-    test.ifError(value)
-*/
+  beforeEach(function() {
+    mockBower = sinon.stub(bower.commands, 'update');
 
-exports.tests = {
-  
-  single_component: function(test) {
-    test.expect(1);
+    UpdateTask.__set__('bower', mockBower);
+  });
 
-    exec('grunt bower-update-selective:single_component', function(error, stdout) {
-      console.log(stdout);
-      test.equals(stdout.indexOf('Updated: component1') > 1, true, 'should update one component');
-      test.done();
-    });  
-  },
-  two_components: function(test) {
-    test.expect(1);
+  afterEach(function() {
+    mockTask = null;
+    bower.commands.update.restore();
+  });
 
-    exec('grunt bower-update-selective:two_components', function(error, stdout) {
-      console.log(stdout);
-      test.equals(stdout.indexOf('Updated: component1, component2') > 1, true, 'should update two components');
-      test.done();
-    });  
-  },
-  no_components: function(test) {
-    test.expect(1);
+  it('should be registered with grunt', function() {
+    UpdateTask.registerWithGrunt.should.exist();
 
-    exec('grunt bower-update-selective:no_components', function(error, stdout) {
-      console.log(stdout);
-      test.equals(stdout.indexOf('No components supplied for update.') > 1, true, 'should update no components');
-      test.done();
-    });  
-  }
-};
+    UpdateTask.registerWithGrunt(grunt);
+    grunt.task._tasks[UpdateTask.TASK_NAME].should.exist();
+  });
+
+  it('should pass error with no components specified', function() {
+    mockTask = createMockTask(null);
+
+    task = new UpdateTask(mockTask);
+    task.run();
+
+    mockBower.should.not.have.been.called;
+  });
+
+  it('should call bower with component specified', function() {
+    mockTask = createMockTask(['component1']);
+
+    task = new UpdateTask(mockTask);
+    task.run();
+
+    mockBower.should.have.been.calledWith(['component1']);
+  });
+
+  it('should call bower with multiple components specified', function() {
+    mockTask = createMockTask(['component1, component2']);
+
+    task = new UpdateTask(mockTask);
+    task.run();
+
+    mockBower.should.have.been.calledWith(['component1', 'component2']);
+  });
+});
