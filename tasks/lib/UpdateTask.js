@@ -2,7 +2,6 @@
 
 var bowerUpdate = require('bower').commands.update;
 var grunt = require('grunt');
-var async = require('async');
 
 var UpdateTask = function(task) {
     this.task = task;

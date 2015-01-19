@@ -1,7 +1,7 @@
 {
   "name": "grunt-bower-update-selective",
   "description": "Grunt plugin for bower update of select components",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "homepage": "https://github.com/d3spis3d/grunt-bower-update-selective",
   "author": {
     "name": "Daniel Budden",
@@ -45,5 +45,8 @@
     "gruntplugin",
     "bower"
   ],
-  "dependencies": {}
+  "dependencies": {
+    "bower": "^1.3.12",
+    "grunt": "~0.4.0"
+  }
 }
