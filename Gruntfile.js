@@ -23,7 +23,6 @@ module.exports = function(grunt) {
       }
     },
 
-    // Before generating any new files, remove any previously-created files.
     clean: {
       tests: ['tmp']
     },
@@ -35,6 +34,7 @@ module.exports = function(grunt) {
     },
 
     'bower-update-selective': {
+      //example usage
       options: {
         update: ['angularjs']
       },

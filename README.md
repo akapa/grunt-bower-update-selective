@@ -2,6 +2,9 @@
 
 > Grunt plugin for bower update of select components
 
+## Uses
+This plugin runs bower update for select components, useful for regularly updated privately hosted bower components. Specify a list of components and this task will run bower update for just those components. 
+
 ## Getting Started
 This plugin requires Grunt `~0.4.0`
 
@@ -17,67 +20,23 @@ Once the plugin has been installed, it may be enabled inside your Gruntfile with
 grunt.loadNpmTasks('grunt-bower-update-selective');
 ```
 
-## The "bower_update_selective" task
+## The "bower-update-selective" task
 
 ### Overview
 In your project's Gruntfile, add a section named `bower_update_selective` to the data object passed into `grunt.initConfig()`.
 
 ```js
 grunt.initConfig({
-  bower_update_selective: {
+  'bower-update-selective': {
     options: {
-      // Task-specific options go here.
+      // components you want to update go here.
+      update: [
+        'component1', 
+        'component2'
+      ]
     },
-    your_target: {
-      // Target-specific file lists and/or options go here.
-    },
-  },
-});
-```
-
-### Options
-
-#### options.separator
-Type: `String`
-Default value: `',  '`
-
-A string value that is used to do something with whatever.
-
-#### options.punctuation
-Type: `String`
-Default value: `'.'`
-
-A string value that is used to do something else with whatever else.
-
-### Usage Examples
-
-#### Default Options
-In this example, the default options are used to do something with whatever. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result would be `Testing, 1 2 3.`
-
-```js
-grunt.initConfig({
-  bower_update_selective: {
-    options: {},
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
-  },
-});
-```
-
-#### Custom Options
-In this example, custom options are used to do something else with whatever else. So if the `testing` file has the content `Testing` and the `123` file had the content `1 2 3`, the generated result in this case would be `Testing: 1 2 3 !!!`
-
-```js
-grunt.initConfig({
-  bower_update_selective: {
-    options: {
-      separator: ': ',
-      punctuation: ' !!!',
-    },
-    files: {
-      'dest/default_options': ['src/testing', 'src/123'],
-    },
+    // required for grunt to correctly run task
+    files: []
   },
 });
 ```
@@ -86,4 +45,4 @@ grunt.initConfig({
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
 
 ## Release History
-_(Nothing yet)_
+0.1.0 - Initial release
