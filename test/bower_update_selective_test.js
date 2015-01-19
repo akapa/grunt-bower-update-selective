@@ -13,7 +13,7 @@ chai.should();
 chai.use(sinonChai);
 
 describe('UpdateTask', function() {
-  var mockBower;
+  var mockBowerUpdate;
   var createMockTask;
   var mockTask;
   var task;
@@ -33,14 +33,18 @@ describe('UpdateTask', function() {
   };
 
   beforeEach(function() {
-    mockBower = sinon.stub(bower.commands, 'update');
+    mockBowerUpdate = sinon.stub();
+    mockBowerUpdate.returns({
+      on: function(event, callback) {
 
-    UpdateTask.__set__('bower', mockBower);
+      }
+    });
+
+    UpdateTask.__set__('bowerUpdate', mockBowerUpdate);
   });
 
   afterEach(function() {
     mockTask = null;
-    bower.commands.update.restore();
   });
 
   it('should be registered with grunt', function() {
@@ -56,7 +60,7 @@ describe('UpdateTask', function() {
     task = new UpdateTask(mockTask);
     task.run();
 
-    mockBower.should.not.have.been.called;
+    mockBowerUpdate.should.not.have.been.called;
   });
 
   it('should call bower with component specified', function() {
@@ -65,15 +69,15 @@ describe('UpdateTask', function() {
     task = new UpdateTask(mockTask);
     task.run();
 
-    mockBower.should.have.been.calledWith(['component1']);
+    mockBowerUpdate.should.have.been.calledWith(['component1']);
   });
 
   it('should call bower with multiple components specified', function() {
-    mockTask = createMockTask(['component1, component2']);
+    mockTask = createMockTask(['component1', 'component2']);
 
     task = new UpdateTask(mockTask);
     task.run();
 
-    mockBower.should.have.been.calledWith(['component1', 'component2']);
+    mockBowerUpdate.should.have.been.calledWith(['component1', 'component2']);
   });
 });

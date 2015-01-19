@@ -1,6 +1,6 @@
 'use strict';
 
-var bower = require('bower').commands;
+var bowerUpdate = require('bower').commands.update;
 var grunt = require('grunt')
 
 var UpdateTask = function(task) {
@@ -26,7 +26,7 @@ UpdateTask.prototype.run = function() {
         return false;
     }
 
-    bower.update(options.update)
+    bowerUpdate(options.update)
         .on('end', function(updated) {
             grunt.log.ok(updated);
         });
