@@ -32,6 +32,13 @@ module.exports = function(grunt) {
       test: {
         src: ['test/**/*.js']
       }
+    },
+
+    'bower-update-selective': {
+      options: {
+        update: ['angularjs']
+      },
+      files: []
     }
   });
 

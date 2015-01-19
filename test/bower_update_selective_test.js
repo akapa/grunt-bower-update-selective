@@ -36,7 +36,15 @@ describe('UpdateTask', function() {
     mockBowerUpdate = sinon.stub();
     mockBowerUpdate.returns({
       on: function(event, callback) {
+        return {
+          on: function(event, callback) {
+            return {
+              on: function(event, callback) {
 
+              }
+            };
+          }
+        };
       }
     });
 

@@ -2,6 +2,7 @@
 
 var bowerUpdate = require('bower').commands.update;
 var grunt = require('grunt');
+var async = require('async');
 
 var UpdateTask = function(task) {
     this.task = task;
@@ -12,7 +13,7 @@ UpdateTask.TASK_NAME = 'bower-update-selective';
 UpdateTask.TASK_DESCRIPTION = 'Grunt plugin for bower update of select components';
 
 UpdateTask.registerWithGrunt = function (grunt) {
-    grunt.registerMultiTask(UpdateTask.TASK_NAME, UpdateTask.TASK_DESCRIPTION, function() {
+    grunt.registerTask(UpdateTask.TASK_NAME, UpdateTask.TASK_DESCRIPTION, function() {
         var task = new UpdateTask(this);
         task.run();
     });
@@ -26,10 +27,20 @@ UpdateTask.prototype.run = function() {
         return false;
     }
 
+    var done = this.task.async();
+
     bowerUpdate(options.update)
-        .on('end', function(updated) {
-            grunt.log.ok(updated);
-        });
+    .on('log', function(result) {
+        grunt.log.writeln(['bower', result.id.cyan, result.message].join(' '));
+    })
+    .on('error', function(error) {
+        grunt.log.writeln(error);
+        done(false);
+    })
+    .on('end', function(updated) {
+        done();
+    });
+
 };
 
 module.exports = UpdateTask;
