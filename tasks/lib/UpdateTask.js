@@ -1,7 +1,7 @@
 'use strict';
 
 var bowerUpdate = require('bower').commands.update;
-var grunt = require('grunt')
+var grunt = require('grunt');
 
 var UpdateTask = function(task) {
     this.task = task;
