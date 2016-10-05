@@ -12,7 +12,7 @@ UpdateTask.TASK_NAME = 'bower-update-selective';
 UpdateTask.TASK_DESCRIPTION = 'Grunt plugin for bower update of select components';
 
 UpdateTask.registerWithGrunt = function (grunt) {
-    grunt.registerTask(UpdateTask.TASK_NAME, UpdateTask.TASK_DESCRIPTION, function() {
+    grunt.registerMultiTask(UpdateTask.TASK_NAME, UpdateTask.TASK_DESCRIPTION, function() {
         var task = new UpdateTask(this);
         task.run();
     });
